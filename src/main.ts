@@ -1,6 +1,6 @@
 import './style.css'
 import {
-    AmbientLight,
+    AmbientLight, BoxGeometry, Color,
     DirectionalLight,
     IcosahedronGeometry,
     Mesh,
@@ -24,32 +24,41 @@ renderer.setClearColor('#192428', 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+const COLOR1 = '#00ffd1';
+const COLOR2 = '#ff8700';
 
-
+let myShaderMaterial = new CustomShaderMaterial({
+    baseMaterial: MeshPhysicalMaterial,
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+        uTime: {
+            value: 0,
+        },
+        uFirstColor: {
+            value: new Color(COLOR1),
+        },
+        uSecondColor: {
+            value: new Color(COLOR2),
+        }
+    },
+    roughness: 0.1,
+    clearcoat: 0.1,
+    flatShading: true,
+    color: 0xff00ff,
+});
 let mesh = new Mesh(
     new IcosahedronGeometry(2, 100),
     //new PlaneGeometry(5, 5, 1000, 1000),
-    new CustomShaderMaterial({
-        baseMaterial: MeshPhysicalMaterial,
-        vertexShader,
-        fragmentShader,
-        uniforms: {
-            uTime: {
-                value: 0,
-            },
-        },
-        roughness: 0.1,
-        clearcoat: 0.1,
-        flatShading: true,
-        color: 0xff00ff,
-    }),
+    myShaderMaterial,
 );
 mesh.receiveShadow = true;
 scene.add(
     mesh,
-    new AmbientLight('#ffffff', 1),
+    new AmbientLight('#ffffff', 0.5),
 );
-let directionalLight = new DirectionalLight('#ffffff', 1);
+
+const directionalLight = new DirectionalLight('#ffffff', 1);
 directionalLight.position.set(3, 3, 3);
 scene.add(directionalLight);
 
@@ -71,7 +80,16 @@ gui.add(mesh.material.uniforms.uTime, 'value', 500, 5000).onChange((value) => {
 gui.add(mesh.material, 'flatShading').onChange((value) => {
     mesh.material.flatShading = value;
     mesh.material.needsUpdate = true;
-}   );
+});
+
+gui.addColor({color: COLOR1}, 'color').onChange((color) => {
+    mesh.material.uniforms.uFirstColor.value.set(color);
+});
+
+gui.addColor({color: COLOR2}, 'color').onChange((color) => {
+    mesh.material.uniforms.uSecondColor.value.set(color);
+});
+
 function animate() {
     requestAnimationFrame(animate);
     mesh.material.uniforms.uTime.value = performance.now() / timeChange;

@@ -1,6 +1,8 @@
 // vUv
 varying vec2 vUv;
 uniform float uTime;
+uniform vec3 uFirstColor;
+uniform vec3 uSecondColor;
 
 
 float zeroToOneValue(float x) {
@@ -14,7 +16,7 @@ vec3 hsvToRgb(vec3 c) {
 }
 
 void main() {
-    vec3 s = vUv.y * vec3(0., 0., 1.) + (1. - vUv.y) * vec3(0., 1., 0.);
+    vec3 s = vUv.y * uFirstColor + (1. - vUv.y) * uSecondColor;
     //vec3 s = vec3(y);
     csm_DiffuseColor = vec4(
         s
