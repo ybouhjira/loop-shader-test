@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@types/three": "^0.150.1",
-    "three": "^0.151.3"
+    "dat.gui": "^0.7.9",
+    "three": "^0.151.3",
+    "three-custom-shader-material": "^5.3.5"
   }
 }
